@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farm Input Cost Calculator - AI Powered</title>
+    <link rel="icon" href="https://public-frontend-cos.metadl.com/mgx/img/favicon-atoms.png" type="image/png">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <img src="https://mgx-backend-cdn.metadl.com/generate/images/842150/2026-01-18/89549f7d-7a5e-407f-aabe-b80d550e3229.png" alt="Logo">
+                    <div>
+                        <h1>Farm Cost Calculator</h1>
+                        <p>AI-Powered Agmarknet Data</p>
+                    </div>
+                </div>
+                <nav class="nav">
+                    <button class="nav-btn active" data-page="dashboard">Dashboard</button>
+                    <button class="nav-btn" data-page="prices">Market Prices</button>
+                    <button class="nav-btn" data-page="calculator">Calculator</button>
+                    <button class="nav-btn" data-page="analysis">Analysis</button>
+                    <button class="nav-btn" data-page="compare">Compare</button>
+                    <button class="nav-btn ai-btn" data-page="ml">AI Predictions</button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Dashboard Page -->
+        <div id="dashboard" class="page active">
+            <div class="hero">
+                <div class="container">
+                    <span class="badge">✨ Now with AI-Powered Predictions</span>
+                    <h1>Farm Input Cost Calculator</h1>
+                    <p>Make informed farming decisions with real-time Agmarknet market prices and AI-powered predictions from 18 states across India</p>
+                    <div class="hero-buttons">
+                        <button class="btn btn-primary" onclick="navigateTo('calculator')">Calculate Costs</button>
+                        <button class="btn btn-ai" onclick="navigateTo('ml')">AI Predictions</button>
+                        <button class="btn btn-outline" onclick="navigateTo('prices')">View Prices</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container">
+                <div class="stats-grid" id="statsGrid">
+                    <!-- Stats will be populated by JavaScript -->
+                </div>
+
+                <div class="card ai-highlight">
+                    <div class="card-header">
+                        <h2>🧠 AI-Powered Features <span class="badge-new">NEW</span></h2>
+                        <p>Machine learning models for smarter farming decisions</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="features-grid">
+                            <div class="feature-card">
+                                <h3>Price Prediction</h3>
+                                <p>AI forecasts future crop prices using neural networks</p>
+                            </div>
+                            <div class="feature-card">
+                                <h3>Crop Recommendations</h3>
+                                <p>Get top 10 profitable crops for your region</p>
+                            </div>
+                            <div class="feature-card">
+                                <h3>Yield Forecasting</h3>
+                                <p>Predict production based on your inputs</p>
+                            </div>
+                            <div class="feature-card">
+                                <h3>Demand Analysis</h3>
+                                <p>Market trends and demand forecasts</p>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <button class="btn btn-ai" onclick="navigateTo('ml')">✨ Explore AI Features</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2>📊 Top 5 Commodities by Average Price</h2>
+                        <p>Highest priced crops in the market</p>
+                    </div>
+                    <div class="card-body">
+                        <div id="topCommodities">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Market Prices Page -->
+        <div id="prices" class="page">
+            <div class="container">
+                <h1>Market Price Explorer</h1>
+                <p class="subtitle">Browse and filter market prices from 4,825+ records</p>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="filter-grid">
+                            <input type="text" id="searchInput" placeholder="Search commodity..." class="input">
+                            <select id="stateFilter" class="select">
+                                <option value="">All States</option>
+                            </select>
+                            <select id="commodityFilter" class="select">
+                                <option value="">All Commodities</option>
+                            </select>
+                            <button class="btn btn-primary" onclick="applyFilters()">Apply Filters</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table id="priceTable" class="table">
+                                <thead>
+                                    <tr>
+                                        <th onclick="sortTable(0)">Commodity ↕</th>
+                                        <th onclick="sortTable(1)">State ↕</th>
+                                        <th onclick="sortTable(2)">District ↕</th>
+                                        <th onclick="sortTable(3)">Market ↕</th>
+                                        <th onclick="sortTable(4)">Price (₹/quintal) ↕</th>
+                                        <th onclick="sortTable(5)">Date ↕</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="priceTableBody">
+                                    <!-- Will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="pagination" id="pagination"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Calculator Page -->
+        <div id="calculator" class="page">
+            <div class="container">
+                <h1>Cost Calculator</h1>
+                <p class="subtitle">Calculate your total farming costs and profitability</p>
+
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Input Your Costs</h2>
+                        </div>
+                        <div class="card-body">
+                            <form id="calculatorForm">
+                                <div class="form-group">
+                                    <label>Land Size (Acres)</label>
+                                    <input type="number" id="landSize" class="input" value="1" min="0" step="0.1" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Crop/Commodity</label>
+                                    <select id="cropSelect" class="select" required>
+                                        <option value="">Select crop</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Seeds Cost (₹)</label>
+                                    <input type="number" id="seedsCost" class="input" value="0" min="0" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Fertilizer Cost (₹)</label>
+                                    <input type="number" id="fertilizerCost" class="input" value="0" min="0" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Pesticide Cost (₹)</label>
+                                    <input type="number" id="pesticideCost" class="input" value="0" min="0" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Labor Cost (₹)</label>
+                                    <input type="number" id="laborCost" class="input" value="0" min="0" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Irrigation Cost (₹)</label>
+                                    <input type="number" id="irrigationCost" class="input" value="0" min="0" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Other Costs (₹)</label>
+                                    <input type="number" id="otherCost" class="input" value="0" min="0" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-block">Calculate Total</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="card result-card">
+                        <div class="card-header">
+                            <h2>Cost Summary</h2>
+                        </div>
+                        <div class="card-body">
+                            <div id="calculatorResult">
+                                <p class="text-center text-muted">Enter your costs and click Calculate to see results</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analysis Page -->
+        <div id="analysis" class="page">
+            <div class="container">
+                <h1>Profitability Analysis</h1>
+                <p class="subtitle">Analyze potential profits based on market prices</p>
+
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Input Details</h2>
+                        </div>
+                        <div class="card-body">
+                            <form id="analysisForm">
+                                <div class="form-group">
+                                    <label>Select Commodity</label>
+                                    <select id="analysisCommodity" class="select" required>
+                                        <option value="">Select commodity</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Total Investment (₹)</label>
+                                    <input type="number" id="totalInvestment" class="input" value="0" min="0" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Expected Yield (Quintals)</label>
+                                    <input type="number" id="expectedYield" class="input" value="0" min="0" step="0.1" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-block">Analyze Profitability</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="card result-card">
+                        <div class="card-header">
+                            <h2>Profitability Scenarios</h2>
+                        </div>
+                        <div class="card-body">
+                            <div id="analysisResult">
+                                <p class="text-center text-muted">Enter details and click Analyze to see profitability scenarios</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Compare Page -->
+        <div id="compare" class="page">
+            <div class="container">
+                <h1>Price Comparison</h1>
+                <p class="subtitle">Compare prices across different states and markets</p>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="filter-grid">
+                            <select id="compareCommodity" class="select">
+                                <option value="">Select commodity</option>
+                            </select>
+                            <button class="btn btn-primary" onclick="comparePrice()">Compare Prices</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="compareResult"></div>
+            </div>
+        </div>
+
+        <!-- ML Predictions Page -->
+        <div id="ml" class="page">
+            <div class="container">
+                <h1>🧠 AI-Powered Predictions</h1>
+                <p class="subtitle">Machine learning models for price prediction, crop recommendations, yield forecasting, and demand analysis</p>
+
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="price-pred">Price Prediction</button>
+                    <button class="tab-btn" data-tab="crop-rec">Crop Recommendation</button>
+                    <button class="tab-btn" data-tab="yield-pred">Yield Forecast</button>
+                    <button class="tab-btn" data-tab="demand">Demand Analysis</button>
+                </div>
+
+                <!-- Price Prediction Tab -->
+                <div id="price-pred" class="tab-content active">
+                    <div class="grid-2">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2>Predict Future Price</h2>
+                                <p>AI model trained on historical data</p>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label>Select Commodity</label>
+                                    <select id="predCommodity" class="select">
+                                        <option value="">Choose commodity</option>
+                                    </select>
+                                </div>
+                                <button class="btn btn-ai btn-block" onclick="predictPrice()">
+                                    🧠 Predict Price
+                                </button>
+                                <div class="alert">
+                                    ⚠️ Model uses Python backend API. Make sure backend is running on port 5000.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card result-card ai-result">
+                            <div class="card-body">
+                                <div id="priceResult">
+                                    <div class="text-center text-muted">
+                                        <p class="icon">📈</p>
+                                        <h3>Ready to Predict</h3>
+                                        <p>Select a commodity and click Predict to see AI-powered price forecast</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Crop Recommendation Tab -->
+                <div id="crop-rec" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Get Crop Recommendations</h2>
+                            <p>AI-powered suggestions based on profitability, market stability, and availability</p>
+                        </div>
+                        <div class="card-body">
+                            <div class="filter-grid">
+                                <select id="recState" class="select">
+                                    <option value="">All States</option>
+                                </select>
+                                <button class="btn btn-ai" onclick="recommendCrops()">
+                                    🌾 Get Recommendations
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="cropRecResult"></div>
+                </div>
+
+                <!-- Yield Prediction Tab -->
+                <div id="yield-pred" class="tab-content">
+                    <div class="grid-2">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2>Predict Crop Yield</h2>
+                                <p>Estimate production based on inputs</p>
+                            </div>
+                            <div class="card-body">
+                                <form id="yieldForm">
+                                    <div class="form-group">
+                                        <label>Land Size (Acres)</label>
+                                        <input type="number" id="yieldLand" class="input" value="1" min="0" step="0.1" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Crop</label>
+                                        <select id="yieldCrop" class="select" required>
+                                            <option value="">Select crop</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Fertilizer Cost (₹)</label>
+                                        <input type="number" id="yieldFert" class="input" value="0" min="0" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Irrigation Cost (₹)</label>
+                                        <input type="number" id="yieldIrr" class="input" value="0" min="0" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Labor Cost (₹)</label>
+                                        <input type="number" id="yieldLabor" class="input" value="0" min="0" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-ai btn-block">📊 Predict Yield</button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="card result-card ai-result">
+                            <div class="card-body">
+                                <div id="yieldResult">
+                                    <div class="text-center text-muted">
+                                        <p class="icon">🌾</p>
+                                        <h3>Ready to Predict</h3>
+                                        <p>Enter your farming details to get yield estimates</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Demand Analysis Tab -->
+                <div id="demand" class="tab-content">
+                    <div class="grid-2">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2>Demand Analysis</h2>
+                                <p>Market demand trends and forecasts</p>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label>Select Commodity</label>
+                                    <select id="demandCommodity" class="select">
+                                        <option value="">Choose commodity</option>
+                                    </select>
+                                </div>
+                                <button class="btn btn-ai btn-block" onclick="analyzeDemand()">
+                                    📊 Analyze Demand
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="card result-card ai-result">
+                            <div class="card-body">
+                                <div id="demandResult">
+                                    <div class="text-center text-muted">
+                                        <p class="icon">📈</p>
+                                        <h3>Ready to Analyze</h3>
+                                        <p>Select a commodity to see demand trends and price forecasts</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Farm Cost Calculator. Built with ❤️ for Indian Farmers</p>
+        </div>
+    </footer>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="spinner"></div>
+        <p>Loading data...</p>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
